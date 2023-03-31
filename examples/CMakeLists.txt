@@ -8,7 +8,6 @@ include_directories(${PROJECT_SOURCE_DIR}/../include)
 
 add_definitions(-DSOURCE_DIR="${CMAKE_SOURCE_DIR}/")
 add_definitions(-DBINARY_DIR="${PROJECT_BINARY_DIR}/")
-
 set(CMAKE_CXX_STANDARD 20)
 
 if (${CMAKE_VERSION} VERSION_LESS "3.7.0")
@@ -19,21 +18,13 @@ else()
   message(STATUS "Will be using standard FindVulkan.cmake module to find Vulkan SDK")
 endif()
 
-find_package(Vulkan REQUIRED)
+find_package(VulkanHeaders REQUIRED CONFIG)
+find_package(Vulkan REQUIRED CONFIG)
+find_package(GLFW3 REQUIRED CONFIG) 
+#find_package(SPIRV_TOOLS REQUIRED CONFIG) 
 
-function(setspirvsupport)
-  get_filename_component(VULKAN_DIR ${Vulkan_INCLUDE_DIR} DIRECTORY)
-  set(SPIR_V_INCLUDE_DIR ${VULKAN_DIR}/spirv-tools/external/spirv-headers/include/spirv/)
-  set(SPIR_V_FILE ${SPIR_V_INCLUDE_DIR}unified1/spirv.hpp11)
-  if(EXISTS ${SPIR_V_FILE})
-	message(STATUS "Found " ${SPIR_V_FILE})
-	message(STATUS "Setting VOOKOO_SPIRV_SUPPORT definition")
-    include_directories(${SPIR_V_INCLUDE_DIR})
-	add_definitions(-DVOOKOO_SPIRV_SUPPORT)
-  endif()
-endfunction(setspirvsupport)
-
-setspirvsupport()
+#include_directories(${SPIR_V_INCLUDE_DIR})
+#add_definitions(-DVOOKOO_SPIRV_SUPPORT)
 
 function(example order exname)
   set(shaders "")
@@ -54,7 +45,7 @@ function(example order exname)
   # Require C++11
   target_compile_features(${order}-${exname} PRIVATE cxx_range_for)
 
-  target_link_libraries(${order}-${exname} glfw Vulkan::Vulkan)
+  target_link_libraries(${order}-${exname} glfw Vulkan::Vulkan Vulkan::Headers)
 
   if (WIN32)
     target_link_libraries(${order}-${exname})

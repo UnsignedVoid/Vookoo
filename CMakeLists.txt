@@ -3,14 +3,22 @@ cmake_policy(VERSION 3.1.3)
 
 project(Vookoo VERSION 2.0.0)
 
-add_subdirectory(external/glfw)
-add_subdirectory(examples)
+#add_subdirectory(external/glfw)
+
+option(VOOKOO_BUILD_EXAMPLES OFF)
+
+message("BUILD EXAMPLES? ${VOOKOO_BUILD_EXAMPLES}")
+
+if(VOOKOO_BUILD_EXAMPLES)
+	add_subdirectory(examples)
+endif()
 
 add_library(vookoo_interface INTERFACE )
 target_sources(vookoo_interface INTERFACE )
 target_include_directories(vookoo_interface INTERFACE
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> )
+target_link_libraries(vookoo_interface INTERFACE Vulkan::Vulkan Vulikan::Headers)
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(GNUInstallDirs)
