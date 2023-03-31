@@ -55,6 +55,7 @@ struct FrameworkOptions
 {
 	int deviceID = 0;
 	bool useCompute = true;
+	vk::DebugReportFlagsEXT debug_callback_levels = vk::DebugReportFlagBitsEXT::eWarning | vk::DebugReportFlagBitsEXT::eError;
 } ;
 
 /// This class provides an optional interface to the vulkan instance, devices and queues.
@@ -74,7 +75,7 @@ public:
   {
     instance_ = im.createUnique();
 
-    callback_ = DebugCallback(*instance_);
+    callback_ = DebugCallback(*instance_, options_.debug_callback_levels);
 
     auto pds = instance_->enumeratePhysicalDevices();
     physical_device_ = pds[options.deviceID];

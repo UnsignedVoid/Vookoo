@@ -35,6 +35,10 @@
 
 #include <vulkan/vulkan.hpp>
 
+#ifdef __ANDROID__
+#include <android/log.h>    
+#endif
+
 namespace vku {
 
 /// Printf-style formatting function.
@@ -570,7 +574,11 @@ private:
       VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType,
       uint64_t object, size_t location, int32_t messageCode,
       const char *pLayerPrefix, const char *pMessage, void *pUserData) {
+    #ifdef __ANDROID__
+    __android_log_print(ANDROID_LOG_WARN, "VkDebugMessage", "%08x debugCallback: %s\n", flags, pMessage);
+    #else
     printf("%08x debugCallback: %s\n", flags, pMessage);
+    #endif
     return VK_FALSE;
   }
   vk::DebugReportCallbackEXT callback_;
